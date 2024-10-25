@@ -2,7 +2,7 @@ use iced::widget::{canvas, pick_list, row};
 use iced::Alignment::Center;
 use iced::{Length, Theme};
 
-use iced_awkbot::helpers::rect_fill::{self, *};
+use iced_awkbot::helpers::rect_fill::RectFill;
 
 fn main() -> iced::Result {
     iced::application("Example", Example::update, Example::view)
