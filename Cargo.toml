@@ -1,0 +1,16 @@
+[package]
+name = "iced_awkbot"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies.iced]
+version = "0.13.1"
+default-features = true
+features = ["advanced", "canvas"]
+
+[profile.dev]
+incremental = true
+
+[[example]]
+name = "rect_fill"
