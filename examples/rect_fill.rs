@@ -37,7 +37,6 @@ impl Example {
         let sidebar = RectFill::new().border_radius(10).width(Length::Fixed(150.));
 
         row![
-            // canvas(RectFill::new()), //.height(Length::Fill),
             sidebar,
             pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged).width(Length::Shrink),
         ]
