@@ -1,4 +1,4 @@
-use iced::widget::{canvas, pick_list, row};
+use iced::widget::{pick_list, row};
 use iced::Alignment::Center;
 use iced::{Length, Theme};
 
@@ -34,8 +34,11 @@ impl Example {
     }
 
     fn view(&self) -> iced::Element<self::Message> {
+        let sidebar = RectFill::new().border_radius(10).width(Length::Fixed(150.));
+
         row![
-            canvas(RectFill::new()).height(Length::Fill),
+            // canvas(RectFill::new()), //.height(Length::Fill),
+            sidebar,
             pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged).width(Length::Shrink),
         ]
         .align_y(Center)
