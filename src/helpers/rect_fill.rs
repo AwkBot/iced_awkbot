@@ -31,6 +31,7 @@ where
                 border: border::rounded(self.border_radios),
                 ..renderer::Quad::default()
             },
+            // TODO implement theme management
             Color::BLACK,
         );
     }
@@ -43,7 +44,7 @@ where
     ) -> layout::Node {
         let width = match self.width {
             Length::Fill => limits.max().width,
-            Length::FillPortion(portion) => portion as f32, // missing Length::FillPortion implementation
+            Length::FillPortion(portion) => portion as f32, // TODO missing Length::FillPortion implementation
             Length::Shrink => 0.0,
             Length::Fixed(fixed) => fixed,
         };
