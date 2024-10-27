@@ -34,12 +34,16 @@ impl Example {
     }
 
     fn view(&self) -> iced::Element<self::Message> {
-        let sidebar = RectFill::new().border_radius(10).width(Length::Fixed(150.));
+        let sidebar = RectFill::new()
+            .border_radius(10)
+            .width(Length::FillPortion(1));
 
         row![
             sidebar,
-            pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged).width(Length::Shrink),
+            pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged)
+                .width(Length::FillPortion(2)),
         ]
+        .width(Length::Fill)
         .align_y(Center)
         .into()
     }

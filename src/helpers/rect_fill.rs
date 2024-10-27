@@ -42,19 +42,13 @@ where
         _renderer: &Renderer,
         limits: &layout::Limits,
     ) -> layout::Node {
-        let width = match self.width {
-            Length::Fill => limits.max().width,
-            Length::FillPortion(portion) => portion as f32, // TODO missing Length::FillPortion implementation
-            Length::Shrink => 0.0,
-            Length::Fixed(fixed) => fixed,
-        };
-        layout::Node::new(Size::new(width, limits.max().height))
+        layout::atomic(limits, self.width, Length::Fill)
     }
 
     fn size(&self) -> Size<Length> {
         Size {
-            width: Length::Shrink,
-            height: Length::Fill,
+            width: self.width,
+            height: Length::Shrink,
         }
     }
 }
