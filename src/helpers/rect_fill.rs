@@ -8,6 +8,7 @@ use iced::{Color, Element, Length, Rectangle, Size};
 #[derive(Debug)]
 pub struct RectFill {
     width: Length,
+    height: Length,
     border_radios: f32,
 }
 
@@ -48,7 +49,7 @@ where
     fn size(&self) -> Size<Length> {
         Size {
             width: self.width,
-            height: Length::Shrink,
+            height: self.height,
         }
     }
 }
@@ -66,6 +67,7 @@ impl Default for RectFill {
     fn default() -> Self {
         RectFill {
             width: Length::Shrink,
+            height: Length::Fill,
             border_radios: 0.,
         }
     }
@@ -74,6 +76,11 @@ impl Default for RectFill {
 impl RectFill {
     pub fn border_radius(mut self, radius: usize) -> Self {
         self.border_radios = radius as f32;
+        self
+    }
+
+    pub fn height(mut self, height: impl Into<Length>) -> Self {
+        self.height = height.into();
         self
     }
 

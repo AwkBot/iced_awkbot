@@ -36,7 +36,8 @@ impl Example {
     fn view(&self) -> iced::Element<self::Message> {
         let sidebar = RectFill::new()
             .border_radius(10)
-            .width(Length::FillPortion(1));
+            .width(Length::FillPortion(1))
+            .height(Length::Fill);
 
         row![
             sidebar,
