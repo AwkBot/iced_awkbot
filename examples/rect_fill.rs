@@ -1,4 +1,4 @@
-use iced::widget::{pick_list, row};
+use iced::widget::{button, column, pick_list, row};
 use iced::Alignment::Center;
 use iced::{Length, Theme};
 
@@ -39,10 +39,15 @@ impl Example {
             .width(Length::FillPortion(1))
             .height(Length::Fill);
 
+        let tmp = button("oi");
+
         row![
             sidebar,
-            pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged)
-                .width(Length::FillPortion(2)),
+            column![
+                tmp,
+                pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged)
+                    .width(Length::FillPortion(2)),
+            ]
         ]
         .width(Length::Fill)
         .align_y(Center)
