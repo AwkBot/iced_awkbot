@@ -23,7 +23,7 @@ uses [iced_aw](https://github.com/iced-rs/iced_aw/), so additional widgets will 
 
 ## Usage
 
-Include `iced_aw` as a dependency in your `Cargo.toml`:
+Include `iced` as a dependency in your `Cargo.toml`:
 
 ```toml
 [dependencies]
