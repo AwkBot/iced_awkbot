@@ -79,6 +79,22 @@ where
     Theme: Catalog,
     Renderer: renderer::Renderer,
 {
+    fn size(&self) -> Size<Length> {
+        Size {
+            width: self.width,
+            height: self.height,
+        }
+    }
+
+    fn layout(
+        &self,
+        _tree: &mut widget::Tree,
+        _renderer: &Renderer,
+        limits: &layout::Limits,
+    ) -> layout::Node {
+        layout::atomic(limits, self.width, Length::Fill)
+    }
+
     fn draw(
         &self,
         _state: &widget::Tree,
@@ -99,22 +115,6 @@ where
             },
             style.color,
         );
-    }
-
-    fn layout(
-        &self,
-        _tree: &mut widget::Tree,
-        _renderer: &Renderer,
-        limits: &layout::Limits,
-    ) -> layout::Node {
-        layout::atomic(limits, self.width, Length::Fill)
-    }
-
-    fn size(&self) -> Size<Length> {
-        Size {
-            width: self.width,
-            height: self.height,
-        }
     }
 }
 
@@ -208,23 +208,23 @@ impl Catalog for Theme {
 }
 
 pub fn load_color(theme: &Theme, cs: RectFillColors) -> Style {
-    let pallete = theme.extended_palette();
+    let palette = theme.extended_palette();
     let color = match cs {
-        RectFillColors::BackgroundBase => pallete.background.base,
-        RectFillColors::BackgroundStrong => pallete.background.strong,
-        RectFillColors::BackgroundWeak => pallete.background.weak,
-        RectFillColors::DangerBase => pallete.danger.base,
-        RectFillColors::DangerStrong => pallete.danger.strong,
-        RectFillColors::DangerWeak => pallete.danger.weak,
-        RectFillColors::PrimaryBase => pallete.primary.base,
-        RectFillColors::PrimaryStrong => pallete.primary.strong,
-        RectFillColors::PrimaryWeak => pallete.primary.weak,
-        RectFillColors::SecondaryBase => pallete.secondary.base,
-        RectFillColors::SecondaryStrong => pallete.secondary.strong,
-        RectFillColors::SecondaryWeak => pallete.secondary.weak,
-        RectFillColors::SuccessBase => pallete.success.base,
-        RectFillColors::SuccessStrong => pallete.success.strong,
-        RectFillColors::SuccessWeak => pallete.success.weak,
+        RectFillColors::BackgroundBase => palette.background.base,
+        RectFillColors::BackgroundStrong => palette.background.strong,
+        RectFillColors::BackgroundWeak => palette.background.weak,
+        RectFillColors::DangerBase => palette.danger.base,
+        RectFillColors::DangerStrong => palette.danger.strong,
+        RectFillColors::DangerWeak => palette.danger.weak,
+        RectFillColors::PrimaryBase => palette.primary.base,
+        RectFillColors::PrimaryStrong => palette.primary.strong,
+        RectFillColors::PrimaryWeak => palette.primary.weak,
+        RectFillColors::SecondaryBase => palette.secondary.base,
+        RectFillColors::SecondaryStrong => palette.secondary.strong,
+        RectFillColors::SecondaryWeak => palette.secondary.weak,
+        RectFillColors::SuccessBase => palette.success.base,
+        RectFillColors::SuccessStrong => palette.success.strong,
+        RectFillColors::SuccessWeak => palette.success.weak,
     };
 
     Style { color: color.color }
