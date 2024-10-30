@@ -1,7 +1,13 @@
 [package]
 name = "iced_nova"
+description = "Widget libraby for Iced"
 version = "0.0.1"
 edition = "2021"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/AwkBot/iced_nova"
+repository = "https://github.com/AwkBot/iced_nova"
+keywords = ["gui", "ui", "graphics", "interface", "widgets"]
 
 [dependencies.iced]
 version = "0.13.1"
