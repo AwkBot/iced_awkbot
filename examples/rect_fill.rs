@@ -2,7 +2,7 @@ use iced::widget::{column, pick_list, row, text};
 use iced::Alignment::Center;
 use iced::{Length, Theme};
 
-use iced_awkbot::helpers::rect_fill::{RectFill, RectFillColors};
+use iced_nova::helpers::rect_fill::{RectFill, RectFillColors};
 
 fn main() -> iced::Result {
     iced::application("Example", Example::update, Example::view)
@@ -27,7 +27,7 @@ impl Example {
         self.theme.clone()
     }
 
-    fn update(&mut self, message: self::Message) {
+    fn update(&mut self, message: Message) {
         match message {
             Message::ThemeChanged(theme) => {
                 self.theme = theme;
@@ -38,7 +38,7 @@ impl Example {
         }
     }
 
-    fn view(&self) -> iced::Element<self::Message> {
+    fn view(&self) -> iced::Element<Message> {
         let sidebar = RectFill::new()
             .border_radius(10)
             .width(Length::FillPortion(1))
