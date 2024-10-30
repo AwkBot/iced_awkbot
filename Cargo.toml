@@ -12,4 +12,4 @@ features = ["advanced", "canvas"]
 incremental = true
 
 [[example]]
-name = "rect_fill"
+name = "rectangle"

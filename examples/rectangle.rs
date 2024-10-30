@@ -1,8 +1,6 @@
 use iced::widget::{column, pick_list, row, text};
 use iced::Alignment::Center;
-use iced::{Length, Theme};
-
-use iced_nova::helpers::rect_fill::{RectFill, RectFillColors};
+use iced::{Element, Length, Theme};
 
 fn main() -> iced::Result {
     iced::application("Example", Example::update, Example::view)
@@ -13,13 +11,13 @@ fn main() -> iced::Result {
 #[derive(Clone, Debug)]
 enum Message {
     ThemeChanged(Theme),
-    ColorChanged(RectFillColors),
+    ColorChanged(iced_nova::ColorPattern),
 }
 
 #[derive(Default)]
 struct Example {
     theme: Theme,
-    color_schema: RectFillColors,
+    color_schema: iced_nova::ColorPattern,
 }
 
 impl Example {
@@ -38,8 +36,8 @@ impl Example {
         }
     }
 
-    fn view(&self) -> iced::Element<Message> {
-        let sidebar = RectFill::new()
+    fn view(&self) -> Element<Message> {
+        let sidebar = iced_nova::Rectangle::new()
             .border_radius(10)
             .width(Length::FillPortion(1))
             .height(Length::Fill)
@@ -56,7 +54,7 @@ impl Example {
                 row![
                     text("Color Scheme:"),
                     pick_list(
-                        RectFillColors::ALL,
+                        iced_nova::ColorPattern::ALL,
                         Some(&self.color_schema),
                         Message::ColorChanged
                     )
