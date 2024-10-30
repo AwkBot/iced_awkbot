@@ -118,8 +118,6 @@ where
     }
 }
 
-//-------------------------------
-
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Style {
     pub color: Color,
