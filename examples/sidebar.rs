@@ -1,7 +1,6 @@
 use iced::widget::{column, pick_list, row, text};
 use iced::Alignment::Center;
 use iced::{Element, Length, Padding, Theme};
-use iced_nova::ColorPattern;
 
 fn main() -> iced::Result {
     iced::application("Example", Example::update, Example::view)
@@ -18,7 +17,6 @@ enum Message {
 #[derive(Default)]
 struct Example {
     theme: Theme,
-    color_schema: iced_nova::ColorPattern,
 }
 
 impl Example {

@@ -19,11 +19,10 @@ where
     width: Length,
     height: Length,
     border_radios: f32,
-    // color_schema: ColorPattern,
     class: Theme::Class<'a>,
     text: Element<'a, Message, Theme, Renderer>,
     padding: Padding,
-    on_press: Option<OnPress<'a, Message>>,
+    on_press: Option<OnPress<Message>>,
 }
 
 impl<'a, Message, Theme, Renderer> SideBarItem<'a, Message, Theme, Renderer>
@@ -219,7 +218,6 @@ where
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left))
             | Event::Touch(touch::Event::FingerPressed { .. }) => {
                 if self.on_press.is_some() {
-                    println!(" clique");
                     let bounds = layout.bounds();
 
                     if cursor.is_over(bounds) {
@@ -246,16 +244,14 @@ struct State {
     is_pressed: bool,
 }
 
-enum OnPress<'a, Message> {
+enum OnPress<Message> {
     Direct(Message),
-    Closure(Box<dyn Fn() -> Message + 'a>),
 }
 
-impl<'a, Message: Clone> OnPress<'a, Message> {
+impl<Message: Clone> OnPress<Message> {
     fn get(&self) -> Message {
         match self {
             OnPress::Direct(message) => message.clone(),
-            OnPress::Closure(f) => f(),
         }
     }
 }
