@@ -3,10 +3,9 @@ use iced::advanced::widget::{self, tree, Tree, Widget};
 use iced::advanced::{renderer, Clipboard, Shell};
 use iced::theme::palette;
 use iced::{
-    border, event, touch, Background, Border, Color, Element, Event, Length, Rectangle, Shadow,
+    border, event, mouse, touch, Background, Color, Element, Event, Length, Padding, Rectangle,
     Size, Theme,
 };
-use iced::{mouse, Padding};
 
 use crate::common::defaults::DEFAULT_PADDING;
 
@@ -108,11 +107,11 @@ where
     }
 
     fn tag(&self) -> tree::Tag {
-        tree::Tag::of::<State>()
+        tree::Tag::of::<Status>()
     }
 
     fn state(&self) -> tree::State {
-        tree::State::new(State::default())
+        tree::State::new(Status::default())
     }
 
     fn layout(
@@ -140,17 +139,13 @@ where
         viewport: &iced::Rectangle,
     ) {
         let bounds = layout.bounds();
-        let state = tree.state.downcast_ref::<State>();
+        let mut state = *tree.state.downcast_ref::<Status>();
 
-        let status = if state.is_selected {
-            Status::Active
-        } else if cursor.is_over(bounds) {
-            Status::Hovered
-        } else {
-            Status::Inactive
+        if cursor.is_over(bounds) && (state == Status::Inactive) {
+            state = Status::Hovered;
         };
 
-        let style = theme.style(&self.class, status);
+        let style = theme.style(&self.class, state);
 
         renderer.fill_quad(
             renderer::Quad {
@@ -224,9 +219,9 @@ where
                     let bounds = layout.bounds();
 
                     if cursor.is_over(bounds) {
-                        let state = tree.state.downcast_mut::<State>();
+                        let status = tree.state.downcast_mut::<Status>();
 
-                        state.is_selected = true;
+                        *status = Status::Active;
 
                         let on_press = self.on_press.as_ref().map(OnPress::get).unwrap();
                         shell.publish(on_press);
@@ -242,11 +237,6 @@ where
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-struct State {
-    is_selected: bool,
-}
-
 enum OnPress<Message> {
     Direct(Message),
 }
@@ -259,9 +249,10 @@ impl<Message: Clone> OnPress<Message> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum Status {
     Active,
+    #[default]
     Inactive,
     Hovered,
     Disabled,
