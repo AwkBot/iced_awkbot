@@ -5,8 +5,6 @@ use iced::mouse;
 use iced::{border, Theme};
 use iced::{Color, Element, Length, Size};
 
-use crate::ColorPattern;
-
 #[derive(Debug)]
 pub struct SideBar<'a, Theme>
 where
@@ -15,7 +13,7 @@ where
     width: Length,
     height: Length,
     border_radios: f32,
-    color_schema: ColorPattern,
+    // color_schema: ColorPattern,
     class: Theme::Class<'a>,
 }
 
@@ -23,11 +21,6 @@ impl<'a, Theme> SideBar<'a, Theme>
 where
     Theme: Catalog,
 {
-    pub fn color_schema(mut self, color_schema: ColorPattern) -> Self {
-        self.color_schema = color_schema;
-        self
-    }
-
     pub fn border_radius(mut self, radius: usize) -> Self {
         self.border_radios = radius as f32;
         self
@@ -57,7 +50,7 @@ where
             width: Length::Shrink,
             height: Length::Fill,
             border_radios: 0.,
-            color_schema: ColorPattern::default(),
+            // color_schema: ColorPattern::default(),
             class: Theme::default(),
         }
     }
@@ -82,7 +75,7 @@ where
     fn size(&self) -> Size<Length> {
         Size {
             width: self.width,
-            height: self.height,
+            height: Length::Shrink,
         }
     }
 
@@ -105,7 +98,8 @@ where
         _cursor: mouse::Cursor,
         _viewport: &iced::Rectangle,
     ) {
-        let style = theme.style(&self.class, self.color_schema.clone());
+        let status = Status::Selected(1);
+        let style = theme.style(&self.class, status);
 
         renderer.fill_quad(
             renderer::Quad {
@@ -113,23 +107,29 @@ where
                 border: border::rounded(self.border_radios),
                 ..renderer::Quad::default()
             },
-            style.color,
+            Color::BLACK,
         );
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum Status {
+    Selected(usize),
+    None,
+}
+
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Style {
-    pub color: Color,
+    pub selected: usize,
 }
 
 pub trait Catalog {
     type Class<'a>;
     fn default<'a>() -> Self::Class<'a>;
-    fn style(&self, item: &Self::Class<'_>, cs: ColorPattern) -> Style;
+    fn style(&self, item: &Self::Class<'_>, status: Status) -> Style;
 }
 
-pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, ColorPattern) -> Style + 'a>;
+pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
 
 impl Catalog for Theme {
     type Class<'a> = StyleFn<'a, Self>;
@@ -138,30 +138,15 @@ impl Catalog for Theme {
         Box::new(load_color)
     }
 
-    fn style(&self, class: &Self::Class<'_>, cs: ColorPattern) -> Style {
-        class(self, cs)
+    fn style(&self, class: &Self::Class<'_>, status: Status) -> Style {
+        class(self, status)
     }
 }
 
-pub fn load_color(theme: &Theme, cs: ColorPattern) -> Style {
-    let palette = theme.extended_palette();
-    let color = match cs {
-        ColorPattern::BackgroundBase => palette.background.base,
-        ColorPattern::BackgroundStrong => palette.background.strong,
-        ColorPattern::BackgroundWeak => palette.background.weak,
-        ColorPattern::DangerBase => palette.danger.base,
-        ColorPattern::DangerStrong => palette.danger.strong,
-        ColorPattern::DangerWeak => palette.danger.weak,
-        ColorPattern::PrimaryBase => palette.primary.base,
-        ColorPattern::PrimaryStrong => palette.primary.strong,
-        ColorPattern::PrimaryWeak => palette.primary.weak,
-        ColorPattern::SecondaryBase => palette.secondary.base,
-        ColorPattern::SecondaryStrong => palette.secondary.strong,
-        ColorPattern::SecondaryWeak => palette.secondary.weak,
-        ColorPattern::SuccessBase => palette.success.base,
-        ColorPattern::SuccessStrong => palette.success.strong,
-        ColorPattern::SuccessWeak => palette.success.weak,
+pub fn load_color(_theme: &Theme, status: Status) -> Style {
+    let selected = match status {
+        Status::Selected(v) => v,
+        Status::None => 0,
     };
-
-    Style { color: color.color }
+    Style { selected }
 }
