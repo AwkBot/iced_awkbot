@@ -1,4 +1,4 @@
-use iced::widget::{column, row, text};
+use iced::widget::{column, pick_list, row, text};
 use iced::Alignment::Center;
 use iced::{Element, Length, Padding, Theme};
 use iced_nova::ColorPattern;
@@ -12,6 +12,7 @@ fn main() -> iced::Result {
 #[derive(Clone, Debug)]
 enum Message {
     ThemeChanged(Theme),
+    ClickSideBarItem,
 }
 
 #[derive(Default)]
@@ -27,8 +28,9 @@ impl Example {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::ThemeChanged(theme) => {
-                self.theme = theme;
+            Message::ThemeChanged(theme) => self.theme = theme,
+            Message::ClickSideBarItem => {
+                println!("clique recebido")
             }
         }
     }
@@ -37,6 +39,7 @@ impl Example {
         let sidebar = iced_nova::SideBarItem::new("123")
             .width(Length::FillPortion(1))
             .height(Length::Shrink)
+            .on_press(Message::ClickSideBarItem)
             .padding(Padding {
                 top: 10.0,
                 bottom: 10.0,
@@ -44,11 +47,11 @@ impl Example {
                 left: 10.0,
             });
 
-        let btn = iced::widget::Button::new("test");
+        let thema = pick_list(Theme::ALL, Some(&self.theme), Message::ThemeChanged);
 
         row![
             sidebar,
-            btn,
+            thema,
             column![text("Test").width(Length::FillPortion(2))]
         ]
         .width(Length::Fill)
