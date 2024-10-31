@@ -19,10 +19,10 @@ where
     width: Length,
     height: Length,
     border_radios: f32,
-    class: Theme::Class<'a>,
     text: Element<'a, Message, Theme, Renderer>,
     padding: Padding,
     on_press: Option<OnPress<Message>>,
+    class: Theme::Class<'a>,
 }
 
 impl<'a, Message, Theme, Renderer> SideBarItem<'a, Message, Theme, Renderer>
@@ -50,13 +50,13 @@ where
             width: Length::Shrink,
             height: Length::Fill,
             border_radios: 0.,
-            // color_schema: ColorPattern::default(),
             class: Theme::default(),
             text: label.into(),
             padding: DEFAULT_PADDING,
             on_press: None,
         }
     }
+
     pub fn on_press(mut self, on_press: Message) -> Self {
         self.on_press = Some(OnPress::Direct(on_press));
         self
@@ -140,11 +140,14 @@ where
         viewport: &iced::Rectangle,
     ) {
         let bounds = layout.bounds();
+        let state = tree.state.downcast_ref::<State>();
 
-        let status = if cursor.is_over(bounds) {
+        let status = if state.is_selected {
+            Status::Active
+        } else if cursor.is_over(bounds) {
             Status::Hovered
         } else {
-            Status::Active
+            Status::Inactive
         };
 
         let style = theme.style(&self.class, status);
@@ -223,7 +226,7 @@ where
                     if cursor.is_over(bounds) {
                         let state = tree.state.downcast_mut::<State>();
 
-                        state.is_pressed = true;
+                        state.is_selected = true;
 
                         let on_press = self.on_press.as_ref().map(OnPress::get).unwrap();
                         shell.publish(on_press);
@@ -241,7 +244,7 @@ where
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 struct State {
-    is_pressed: bool,
+    is_selected: bool,
 }
 
 enum OnPress<Message> {
@@ -268,8 +271,6 @@ pub enum Status {
 pub struct Style {
     pub background: Background,
     pub text_color: Color,
-    pub border: Border,
-    pub shadow: Shadow,
 }
 
 pub trait Catalog {
@@ -283,8 +284,6 @@ impl Default for Style {
         Self {
             background: Background::Color(Color::BLACK),
             text_color: Color::BLACK,
-            border: Border::default(),
-            shadow: Shadow::default(),
         }
     }
 }
@@ -308,11 +307,11 @@ pub fn load_color(theme: &Theme, status: Status) -> Style {
     let base = styled(palette.primary.strong);
 
     match status {
-        Status::Active => base,
-        Status::Inactive => base,
+        Status::Active => styled(palette.background.base),
+        Status::Inactive => styled(palette.background.weak),
         Status::Hovered => Style {
             background: Background::Color(palette.primary.base.color),
-            ..base
+            ..styled(palette.background.strong)
         },
         Status::Disabled => disabled(base),
     }
@@ -322,8 +321,6 @@ fn styled(pair: palette::Pair) -> Style {
     Style {
         background: Background::Color(pair.color),
         text_color: pair.text,
-        border: border::rounded(2),
-        ..Style::default()
     }
 }
 
@@ -331,6 +328,5 @@ fn disabled(style: Style) -> Style {
     Style {
         background: style.background.scale_alpha(0.5),
         text_color: style.text_color.scale_alpha(0.5),
-        ..style
     }
 }
