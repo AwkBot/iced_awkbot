@@ -22,6 +22,7 @@ where
     padding: Padding,
     on_press: Option<OnPress<Message>>,
     class: Theme::Class<'a>,
+    // TODO font
 }
 
 impl<'a, Message, Theme, Renderer> SideBarItem<'a, Message, Theme, Renderer>
@@ -120,7 +121,6 @@ where
         renderer: &Renderer,
         limits: &layout::Limits,
     ) -> layout::Node {
-        // layout::atomic(limits, self.width, Length::Fill)
         layout::padded(limits, self.width, self.height, self.padding, |limits| {
             self.text
                 .as_widget()
@@ -133,7 +133,7 @@ where
         tree: &widget::Tree,
         renderer: &mut Renderer,
         theme: &Theme,
-        _style: &renderer::Style,
+        style: &renderer::Style,
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         viewport: &iced::Rectangle,
@@ -145,26 +145,22 @@ where
             state = Status::Hovered;
         };
 
-        let style = theme.style(&self.class, state);
-
+        let status = theme.style(&self.class, state);
         renderer.fill_quad(
             renderer::Quad {
                 bounds: layout.bounds(),
                 border: border::rounded(self.border_radios),
                 ..renderer::Quad::default()
             },
-            style.background,
+            status.background,
         );
 
         let content_layout = layout.children().next().unwrap();
-
         self.text.as_widget().draw(
             &tree.children[0],
             renderer,
             theme,
-            &renderer::Style {
-                text_color: style.text_color,
-            },
+            style,
             content_layout,
             cursor,
             viewport,
@@ -258,23 +254,21 @@ pub enum Status {
     Disabled,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct Style {
-    pub background: Background,
-    pub text_color: Color,
-}
-
 pub trait Catalog {
     type Class<'a>;
     fn default<'a>() -> Self::Class<'a>;
     fn style(&self, item: &Self::Class<'_>, status: Status) -> Style;
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct Style {
+    pub background: Background,
+}
+
 impl Default for Style {
     fn default() -> Self {
         Self {
             background: Background::Color(Color::BLACK),
-            text_color: Color::BLACK,
         }
     }
 }
@@ -300,10 +294,7 @@ pub fn load_color(theme: &Theme, status: Status) -> Style {
     match status {
         Status::Active => styled(palette.background.base),
         Status::Inactive => styled(palette.background.weak),
-        Status::Hovered => Style {
-            background: Background::Color(palette.primary.base.color),
-            ..styled(palette.background.strong)
-        },
+        Status::Hovered => styled(palette.background.strong),
         Status::Disabled => disabled(base),
     }
 }
@@ -311,13 +302,11 @@ pub fn load_color(theme: &Theme, status: Status) -> Style {
 fn styled(pair: palette::Pair) -> Style {
     Style {
         background: Background::Color(pair.color),
-        text_color: pair.text,
     }
 }
 
 fn disabled(style: Style) -> Style {
     Style {
         background: style.background.scale_alpha(0.5),
-        text_color: style.text_color.scale_alpha(0.5),
     }
 }
