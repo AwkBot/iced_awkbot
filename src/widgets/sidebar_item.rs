@@ -273,7 +273,7 @@ impl Default for Style {
     }
 }
 
-pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
+type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
 
 impl Catalog for Theme {
     type Class<'a> = StyleFn<'a, Self>;
@@ -287,7 +287,7 @@ impl Catalog for Theme {
     }
 }
 
-pub fn load_color(theme: &Theme, status: Status) -> Style {
+fn load_color(theme: &Theme, status: Status) -> Style {
     let palette = theme.extended_palette();
     let base = styled(palette.primary.strong);
 

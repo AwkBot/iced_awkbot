@@ -129,7 +129,7 @@ pub trait Catalog {
     fn style(&self, item: &Self::Class<'_>, cs: ColorPattern) -> Style;
 }
 
-pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, ColorPattern) -> Style + 'a>;
+type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, ColorPattern) -> Style + 'a>;
 
 impl Catalog for Theme {
     type Class<'a> = StyleFn<'a, Self>;
@@ -143,7 +143,7 @@ impl Catalog for Theme {
     }
 }
 
-pub fn load_color(theme: &Theme, cs: ColorPattern) -> Style {
+fn load_color(theme: &Theme, cs: ColorPattern) -> Style {
     let palette = theme.extended_palette();
     let color = match cs {
         ColorPattern::BackgroundBase => palette.background.base,
