@@ -1,6 +1,7 @@
 use iced::widget::{column, pick_list, row, text};
 use iced::Alignment::Center;
 use iced::{Element, Length, Padding, Theme};
+use iced_nova::widgets::sidebar::SideBar;
 
 fn main() -> iced::Result {
     iced::application("Example", Example::update, Example::view)
@@ -34,9 +35,9 @@ impl Example {
     }
 
     fn view(&self) -> Element<Message> {
+        let tmp = SideBar::new();
         let sidebar = iced_nova::SideBarItem::new("123")
             .width(Length::FillPortion(1))
-            .height(Length::Shrink)
             .on_press(Message::ClickSideBarItem)
             .padding(Padding {
                 top: 10.0,

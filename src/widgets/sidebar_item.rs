@@ -12,7 +12,7 @@ use crate::common::defaults::DEFAULT_PADDING;
 #[allow(missing_debug_implementations)]
 pub struct SideBarItem<'a, Message, Theme = iced::Theme, Renderer = iced::Renderer>
 where
-    Renderer: iced::advanced::Renderer,
+    Renderer: renderer::Renderer,
     Theme: Catalog,
 {
     width: Length,
@@ -22,12 +22,11 @@ where
     padding: Padding,
     on_press: Option<OnPress<Message>>,
     class: Theme::Class<'a>,
-    // TODO font
 }
 
 impl<'a, Message, Theme, Renderer> SideBarItem<'a, Message, Theme, Renderer>
 where
-    Renderer: iced::advanced::Renderer,
+    Renderer: renderer::Renderer,
     Theme: Catalog,
 {
     pub fn border_radius(mut self, radius: usize) -> Self {
@@ -48,7 +47,7 @@ where
     pub fn new(label: impl Into<Element<'a, Message, Theme, Renderer>>) -> Self {
         Self {
             width: Length::Shrink,
-            height: Length::Fill,
+            height: Length::Shrink,
             border_radios: 0.,
             class: Theme::default(),
             text: label.into(),
@@ -77,7 +76,7 @@ impl<'a, Message: 'a, Theme, Renderer> From<SideBarItem<'a, Message, Theme, Rend
     for Element<'a, Message, Theme, Renderer>
 where
     Theme: Catalog + 'a,
-    Renderer: iced::advanced::Renderer + 'a,
+    Renderer: renderer::Renderer + 'a,
     Message: std::clone::Clone,
 {
     fn from(obj: SideBarItem<'a, Message, Theme, Renderer>) -> Self {
@@ -254,12 +253,6 @@ pub enum Status {
     Disabled,
 }
 
-pub trait Catalog {
-    type Class<'a>;
-    fn default<'a>() -> Self::Class<'a>;
-    fn style(&self, item: &Self::Class<'_>, status: Status) -> Style;
-}
-
 #[derive(Debug, Clone, Copy)]
 pub struct Style {
     pub background: Background,
@@ -271,6 +264,12 @@ impl Default for Style {
             background: Background::Color(Color::BLACK),
         }
     }
+}
+
+pub trait Catalog {
+    type Class<'a>;
+    fn default<'a>() -> Self::Class<'a>;
+    fn style(&self, item: &Self::Class<'_>, status: Status) -> Style;
 }
 
 type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
