@@ -1,28 +1,32 @@
 use iced::advanced::layout::{self};
 use iced::advanced::widget::{self, Tree};
 use iced::advanced::{renderer, Widget};
-use iced::{Length, Size};
-use iced::{Renderer, Theme};
+use iced::{Element, Length, Size, Theme};
 
-use crate::SideBarItem;
+use super::sidebar_item::SideBarItem;
+
 #[allow(missing_debug_implementations)]
-pub struct SideBar<'a> {
-    width: Length,
-    height: Length,
-    panels: Vec<SideBarItem<'a, Theme>>,
-}
-
-impl<'a> SideBar<'a>
+pub struct SideBar<'a, Message, Theme = iced::Theme, Renderer = iced::Renderer>
 where
     Renderer: renderer::Renderer,
-    Theme: Catalog,
+    Theme: Catalog + super::sidebar_item::Catalog,
 {
-    pub fn new() -> Self {
-        let panels = vec![
-            SideBarItem::new("Panels 1"),
-            SideBarItem::new("Panels 2"),
-            SideBarItem::new("Panels 3"),
-        ];
+    width: Length,
+    height: Length,
+    panels: Vec<SideBarItem<'a, Message, Theme, Renderer>>,
+}
+
+impl<'a, Message, Theme, Renderer> SideBar<'a, Message, Theme, Renderer>
+where
+    Renderer: renderer::Renderer,
+    Theme: Catalog + super::sidebar_item::Catalog,
+{
+    pub fn new<T>(label: T) -> Self
+    where
+        T: Into<Element<'a, Message, Theme, Renderer>>,
+    {
+        let painel = SideBarItem::new(label);
+        let panels = vec![painel];
 
         Self {
             width: Length::Shrink,
@@ -42,11 +46,12 @@ where
     }
 }
 
-impl<'a, Message> Widget<Message, Theme, Renderer> for SideBar<'a>
+impl<'a, Message, Theme, Renderer> Widget<Message, Theme, Renderer>
+    for SideBar<'a, Message, Theme, Renderer>
 where
-    Message: std::clone::Clone,
-    Renderer: renderer::Renderer,
-    Theme: Catalog,
+    Message: 'a + Clone,
+    Renderer: 'a + renderer::Renderer,
+    Theme: Catalog + super::sidebar_item::Catalog,
 {
     fn children(&self) -> Vec<Tree> {
         self.panels
@@ -85,6 +90,19 @@ where
         _cursor: iced::advanced::mouse::Cursor,
         _viewport: &iced::Rectangle,
     ) {
+        let _x = 1;
+    }
+}
+
+impl<'a, Message, Theme, Renderer> From<SideBar<'a, Message, Theme, Renderer>>
+    for Element<'a, Message, Theme, Renderer>
+where
+    Renderer: 'a + renderer::Renderer,
+    Theme: 'a + Catalog + super::sidebar_item::Catalog,
+    Message: 'a + Clone,
+{
+    fn from(obj: SideBar<'a, Message, Theme, Renderer>) -> Self {
+        Self::new(obj)
     }
 }
 

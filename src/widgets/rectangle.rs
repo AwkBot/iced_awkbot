@@ -66,11 +66,11 @@ where
 impl<'a, Message, Theme, Renderer> From<Rectangle<'a, Theme>>
     for Element<'a, Message, Theme, Renderer>
 where
-    Theme: Catalog + 'a,
-    Renderer: renderer::Renderer,
+    Renderer: 'a + renderer::Renderer,
+    Theme: 'a + Catalog,
 {
     fn from(obj: Rectangle<'a, Theme>) -> Self {
-        Self::new(obj)
+        Element::new(obj)
     }
 }
 

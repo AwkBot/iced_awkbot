@@ -44,7 +44,10 @@ where
         self
     }
 
-    pub fn new(label: impl Into<Element<'a, Message, Theme, Renderer>>) -> Self {
+    pub fn new<T>(label: T) -> Self
+    where
+        T: Into<Element<'a, Message, Theme, Renderer>>,
+    {
         Self {
             width: Length::Shrink,
             height: Length::Shrink,
@@ -72,24 +75,24 @@ where
     }
 }
 
-impl<'a, Message: 'a, Theme, Renderer> From<SideBarItem<'a, Message, Theme, Renderer>>
+impl<'a, Message, Theme, Renderer> From<SideBarItem<'a, Message, Theme, Renderer>>
     for Element<'a, Message, Theme, Renderer>
 where
-    Theme: Catalog + 'a,
-    Renderer: renderer::Renderer + 'a,
-    Message: std::clone::Clone,
+    Renderer: 'a + renderer::Renderer,
+    Theme: 'a + Catalog,
+    Message: Clone + 'a,
 {
     fn from(obj: SideBarItem<'a, Message, Theme, Renderer>) -> Self {
-        Self::new(obj)
+        Element::new(obj)
     }
 }
 
 impl<'a, Message, Theme, Renderer> Widget<Message, Theme, Renderer>
     for SideBarItem<'a, Message, Theme, Renderer>
 where
-    Renderer: renderer::Renderer,
+    Message: 'a + Clone,
+    Renderer: 'a + renderer::Renderer,
     Theme: Catalog,
-    Message: std::clone::Clone,
 {
     fn children(&self) -> Vec<Tree> {
         vec![Tree::new(&self.text)]
